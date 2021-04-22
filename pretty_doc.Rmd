@@ -2,33 +2,98 @@
 title: "Example Github Page"
 author: "Mara Alexeev, MD, MPH"
 date: "Updated `r Sys.Date()`"
-output:
-  prettydoc::html_pretty:
-    theme: cayman
-    highlight: github
 ---
 
-```{r libraries, message=FALSE, warning=FALSE}
+```{r libraries, echo=TRUE, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(kableExtra)
+library(magrittr)
+library(plotly)
+library(sf)
 ```
 
+This is a very ***basic*** static webpage you can make from an .Rmd file.
 
-# Tiny examples 
+# Tiny examples
 
 ## Rmarkdown
+
 Math expressions, e.g. $Y = X\beta + \epsilon$.
 
-You can insert footnotes^[A very informative footnote here.]. 
+You can insert footnotes.[^1]
 
-Link the Github repo
+[^1]: A very informative footnote here.
+
+[Make links](https://github.com/MaraAlexeev/example_for_CIC_workshop_May_2021) to important places like a Github Repository for this static webpage you are viewing.
 
 ## Tables
 
-There are excellent ways to display tabular data; my favorites are `knitr::kable()` and the .
+There are excellent ways to display tabular data.
 
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(iris, 10))
+One of my favorite resources [here](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html#Overview).
+
+```{r, echo=FALSE}
+knitr::kable(head(iris, 10)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
 ```
 
-## Graphs
+You can get [very over-the-top](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html#Grouped_Columns__Rows) with different ways to organize the data.
+
+```{r, echo=FALSE}
+dt <- mtcars[1:5, 1:6]
+knitr::kable(head(dt, 10))%>%
+  kable_paper() %>%
+  add_header_above(c(" ", "My Group" = 2, "My Other Group " = 2, "Another Group" = 2)) %>%
+  add_header_above(c(" ", "This Group" = 4, "That Group" = 2)) %>%
+  add_header_above(c(" ", "Maybe Too Many Groups" = 6))
+```
+
+## Plots
+
+R has amazing graphing powers---my favorite is the `ggplot2` package---and a great community with people sharing their work---look up [\#TidyTuesday](https://twitter.com/hashtag/TidyTuesday?src=hashtag_click) on Twitter---and [teaching others](https://ggplot2-book.org/introduction.html) how to do great work too. The `plotly` package let's you make your [plots interactive](https://plotly.com/ggplot2/) as well. Below are some examples from the Plotly reference guide, shown first as static images and then as interactive ones.
+
+
+```{r}
+
+nc <- sf::st_read(system.file("shape/nc.shp", package = "sf"), quiet = TRUE)
+
+
+nc_plot <- ggplot(data = nc) + geom_sf(aes(fill = AREA))
+nc_plot
+                                       
+fig <- ggplotly(nc_plot)
+
+fig
+```
+
+```{r}
+set.seed(8)
+dat <- data.frame(cond = factor(rep(c("Treatment","Placebo"), each=200)), happiness = c(rnorm(200),rnorm(200, mean=.8)))
+
+p <- ggplot(dat, aes(x=cond, y=happiness, fill=cond)) + geom_boxplot()
+
+p
+
+fig <- ggplotly(p)
+
+fig
+```
+
+
+```{r}
+df <- diamonds[sample(1:nrow(diamonds), size = 1000),]
+
+p <- ggplot(df, aes(x = color)) + 
+  geom_bar(aes(y = ..count../sum(..count..), fill = cut)) + 
+  scale_fill_brewer(palette = "Set3") + 
+  ylab("Percent") + 
+  ggtitle("Show precentages in bar chart") +
+  labs(x = "Color")
+
+p
+
+fig <- ggplotly(p)
+
+fig
+```
+
