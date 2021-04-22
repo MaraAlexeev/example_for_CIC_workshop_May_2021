@@ -1,0 +1,34 @@
+---
+title: "Example Github Page"
+author: "Mara Alexeev, MD, MPH"
+date: "Updated `r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+---
+
+```{r libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(kableExtra)
+```
+
+
+# Tiny examples 
+
+## Rmarkdown
+Math expressions, e.g. $Y = X\beta + \epsilon$.
+
+You can insert footnotes^[A very informative footnote here.]. 
+
+Link the Github repo
+
+## Tables
+
+There are excellent ways to display tabular data; my favorites are `knitr::kable()` and the .
+
+```{r, echo=FALSE, results='asis'}
+knitr::kable(head(iris, 10))
+```
+
+## Graphs
